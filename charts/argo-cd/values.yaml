@@ -1,10 +1,16 @@
 argo-cd:
+  fullnameOverride: argocd
   dex:
     enabled: false
-  notifications:
-    enabled: false
-  applicationSet:
-    enabled: false
   server:
-    extraArgs:
-      - --insecure
+    service:
+      type: NodePort
+      # Je nach Chart-Version heißen die Keys z.B. nodePort, nodePortHttp/ nodePortHttps.
+      # Prüfe per: helm show values argo/argo-cd | grep -i nodeport
+      nodePort: 32080
+    # optional, reiner Komfort falls du später Ingress nutzt
+    config:
+      repositories: |
+        - type: helm
+          name: argo
+          url: https://argoproj.github.io/argo-helm
