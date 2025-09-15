@@ -3,22 +3,35 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: longhorn
-  namespace: argocd
+  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
   annotations:
     argocd.argoproj.io/sync-wave: "40"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: platform
-  source:
-    repoURL: https://charts.longhorn.io
-    chart: longhorn
-    targetRevision: {{ .Values.longhorn.chartVersion | default "*" | quote }}
-    helm:
-      releaseName: longhorn
+  project: {{ .Values.longhorn.project | default "platform" | quote }}
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.longhorn.namespace | default "longhorn-system" | quote }}
+  sources:
+    - repoURL: https://charts.longhorn.io
+      chart: longhorn
+      targetRevision: {{ .Values.longhorn.chartVersion | default "v1.9.1" | quote }}
+      helm:
+        releaseName: longhorn
+        values: |
+          # Empfehlung aus der Longhorn-Doku für Argo CD
+          preUpgradeChecker:
+            jobEnabled: false
+
+          # ---- Optionale Defaults (bei Bedarf auskommentieren & anpassen) ----
+          persistence:
+            defaultClass: true
+            defaultClassReplicaCount: 2
+            reclaimPolicy: Delete
+          # defaultSettings:
+          #   defaultDataPath: /var/lib/longhorn
+          #   guaranteedEngineCPU: 0.2
   syncPolicy:
     automated:
       prune: true
