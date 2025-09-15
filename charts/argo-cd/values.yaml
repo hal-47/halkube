@@ -1,16 +1,83 @@
+# charts/argo-cd/values.yaml
 argo-cd:
+  # Installiert/aktualisiert die CRDs mit dem Chart (sicher bei frischen Clustern)
+  crds:
+    install: true
+
+  # ---------------------------------------------------------------------------
+  # Zentrale Argo-CD Konfiguration
+  # ---------------------------------------------------------------------------
   configs:
     cm:
+      # Base-URL der Argo-CD-UI (bei Domain hier die Domain eintragen)
       url: https://192.168.178.85:30443
+      # Admin-Login erlauben (UI-Nutzer 'admin')
+      accounts.admin.enabled: "true"
+    rbac:
+      # UI-RBAC: standardmäßig volle Rechte
+      policy.default: role:admin
+      policy.csv: |
+        p, role:admin, *, *, *, allow
+        g, admin, role:admin
+      policy.matchMode: glob
+      scopes: '[groups]'
     params:
+      # TLS am argocd-server einschalten/abschalten
       server.insecure: "false"
+
+  # ---------------------------------------------------------------------------
+  # Argo-CD Server (UI/API)
+  # ---------------------------------------------------------------------------
   server:
     service:
       type: NodePort
-      # nur https, klar und eindeutig
       ports:
         - name: https
           port: 443
+          targetPort: 8080
           nodePort: 30443
           protocol: TCP
+        - name: http
+          port: 80
           targetPort: 8080
+          nodePort: 30080
+          protocol: TCP
+    serviceAccount:
+      create: true
+      name: argocd-server
+
+  # ---------------------------------------------------------------------------
+  # Repository Server (rendert Helm/Kustomize)
+  # ---------------------------------------------------------------------------
+  repoServer:
+    service:
+      ports:
+        - name: server
+          port: 8081
+          targetPort: 8081
+          protocol: TCP
+    # Diese Labels helfen, wenn Services nur auf 'name' matchen
+    podLabels:
+      app.kubernetes.io/name: argocd-repo-server
+      app.kubernetes.io/instance: argo-cd
+    serviceAccount:
+      create: true
+      name: argocd-repo-server
+
+  # ---------------------------------------------------------------------------
+  # Application Controller
+  # ---------------------------------------------------------------------------
+  applicationController:
+    serviceAccount:
+      create: true
+      name: argocd-application-controller
+    metrics:
+      enabled: true
+
+  # ---------------------------------------------------------------------------
+  # Dex (OIDC) & Notifications – aktiv lassen, wie im Cluster vorhanden
+  # ---------------------------------------------------------------------------
+  dex:
+    enabled: true
+  notifications:
+    enabled: true
