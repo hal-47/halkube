@@ -35,12 +35,12 @@ argo-cd:
         - name: https
           port: 443
           targetPort: 8080
-          nodePort: 30443
+          nodePort: 32443
           protocol: TCP
         - name: http
           port: 80
           targetPort: 8080
-          nodePort: 30080
+          nodePort: 32080
           protocol: TCP
     serviceAccount:
       create: true
