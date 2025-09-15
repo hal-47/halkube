@@ -1,0 +1,28 @@
+{{- if .Values.longhorn.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: platform
+  source:
+    repoURL: https://charts.longhorn.io
+    chart: longhorn
+    targetRevision: {{ .Values.longhorn.chartVersion | default "*" | quote }}
+    helm:
+      releaseName: longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.longhorn.namespace | default "longhorn-system" | quote }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

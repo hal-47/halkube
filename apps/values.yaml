@@ -2,3 +2,18 @@ argoCd:
   enabled: true
   revision: HEAD
   namespace: argocd
+
+metallb:
+  enabled: false
+  chartVersion: "*"
+  namespace: metallb-system
+
+traefik:
+  enabled: false
+  chartVersion: "*"
+  namespace: traefik
+
+longhorn:
+  enabled: false
+  chartVersion: "*"
+  namespace: longhorn-system
