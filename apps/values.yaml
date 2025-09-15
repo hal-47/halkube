@@ -14,6 +14,6 @@ traefik:
   namespace: traefik
 
 longhorn:
-  enabled: true
+  enabled: false
   chartVersion: "*"
   namespace: longhorn-system
