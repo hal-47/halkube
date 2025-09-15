@@ -1,0 +1,4 @@
+argoCd:
+  enabled: true
+  revision: HEAD
+  namespace: argocd
