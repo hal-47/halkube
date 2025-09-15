@@ -1,16 +1,16 @@
 argo-cd:
-  fullnameOverride: argocd
-  dex:
-    enabled: false
+  configs:
+    cm:
+      url: https://192.168.178.85:30443
+    params:
+      server.insecure: "false"
   server:
     service:
       type: NodePort
-      # Je nach Chart-Version heißen die Keys z.B. nodePort, nodePortHttp/ nodePortHttps.
-      # Prüfe per: helm show values argo/argo-cd | grep -i nodeport
-      nodePort: 32080
-    # optional, reiner Komfort falls du später Ingress nutzt
-    config:
-      repositories: |
-        - type: helm
-          name: argo
-          url: https://argoproj.github.io/argo-helm
+      # nur https, klar und eindeutig
+      ports:
+        - name: https
+          port: 443
+          nodePort: 30443
+          protocol: TCP
+          targetPort: 8080
