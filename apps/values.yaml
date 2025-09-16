@@ -4,7 +4,7 @@ argoCd:
   namespace: argocd
 
 metallb:
-  enabled: false
+  enabled: true
   path: "apps/manifests/metallb"
   revision: "HEAD"
 
