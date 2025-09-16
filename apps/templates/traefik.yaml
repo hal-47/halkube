@@ -95,7 +95,7 @@ spec:
         # --- Cloudflare API Token aus Secret ---
         envFrom:
           - secretRef:
-            name: cloudflare-dns
+              name: cloudflare-dns
 
   syncPolicy:
     automated:
