@@ -32,16 +32,17 @@ spec:
             enabled: true
           kubernetesIngress:
             enabled: true
+            publishedService:
+              enabled: true
 
         # --- Services/Ports: ClusterIP (für Cloudflared) ---
         service:
-          service:
-            enabled: true
-            type: LoadBalancer
-            annotations:
-              metallb.io/address-pool: lb-static   # oder lb-dynamic
-            loadBalancerIP: 192.168.178.222        # nur wenn du den statischen Pool nutzt
-            externalTrafficPolicy: Local           # echte Client-IP erhalten
+          enabled: true
+          type: LoadBalancer
+          annotations:
+            metallb.universe.tf/address-pool: lb-static   # moderner Key
+          loadBalancerIP: 192.168.178.222        # nur wenn du den statischen Pool nutzt
+          externalTrafficPolicy: Local           # echte Client-IP erhalten
 
         ports:
           web:
@@ -61,7 +62,7 @@ spec:
         additionalArguments:
           - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
           - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-          - "--certificatesresolvers.cloudflare.acme.email={{ .Values.global.acmeEmail | default "admin@h47.eu" }}"
+          - "--certificatesresolvers.cloudflare.acme.email=admin@h47.eu"
           - "--certificatesresolvers.cloudflare.acme.storage=/data/acme.json"
           - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
           # optional: zusätzliche Resolver für schnellere DNS-Prüfung
@@ -80,12 +81,9 @@ spec:
           path: /data
 
         # --- Cloudflare API Token aus Secret ---
-        env:
-          - name: CF_DNS_API_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: traefik-cloudflare
-                key: token
+        envFrom:
+          - secretRef:
+            name: cloudflare-dns
 
   syncPolicy:
     automated:
