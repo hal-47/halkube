@@ -12,6 +12,8 @@ traefik:
   enabled: true
   chartVersion: "37.1.1"
   namespace: traefik
+  repoURL: "https://github.com/hal-47/halkube.git"
+  targetRevision: "main"   # oder dein Branch/Tag
 
 longhorn:
   enabled: true
