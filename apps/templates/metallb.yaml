@@ -3,26 +3,37 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: metallb
-  namespace: argocd
+  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
   annotations:
     argocd.argoproj.io/sync-wave: "20"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: platform
-  source:
-    repoURL: https://metallb.github.io/metallb
-    chart: metallb
-    targetRevision: {{ .Values.metallb.chartVersion | default "*" | quote }}
-    helm:
-      releaseName: metallb
+  project: {{ .Values.metallb.project | default "platform" | quote }}
+  sources:
+    - repoURL: https://metallb.github.io/metallb
+      chart: metallb
+      targetRevision: {{ .Values.metallb.chartVersion | default "0.15.2" | quote }}
+      helm:
+        releaseName: {{ .Values.metallb.releaseName | default "metallb" | quote }}
+        values: |
+          # Beispiel: LoadBalancerClass setzen (optional)
+          loadBalancerClass: ""
+
+    - repoURL: {{ .Values.global.repoURL | default "https://git.example.com/your/repo.git" | quote }}
+      targetRevision: {{ .Values.metallb.revision | default "HEAD" | quote }}
+      path: apps/manifests/metallb
+      directory: { recurse: true }
+
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.metallb.namespace | default "metallb-system" | quote }}
+
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    automated: { prune: true, selfHeal: true }
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+      - Replace=true
 {{- end }}

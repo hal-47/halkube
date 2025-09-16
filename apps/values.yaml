@@ -4,8 +4,8 @@ argoCd:
   namespace: argocd
 
 metallb:
-  enabled: false
-  chartVersion: "*"
+  enabled: true
+  chartVersion: "0.15.2"
   namespace: metallb-system
 
 traefik:
@@ -15,5 +15,5 @@ traefik:
 
 longhorn:
   enabled: true
-  chartVersion: "*"
+  chartVersion: "1.9.1"
   namespace: longhorn-system
