@@ -1,4 +1,6 @@
 {{- if .Values.argoCd.enabled }}
+{{- $base := default "intern.h47.eu" .Values.baseDomain -}}
+{{- $host := default (printf "argocd.%s" $base) (index .Values "argocd" "host") -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -38,11 +40,11 @@ spec:
                 # argocd CLI (gRPC über h2c)
                 traefik.ingress.kubernetes.io/service.serversscheme: h2c
               hosts:
-                - {{ .Values.argocd.host | default (printf "argocd.%s" .Values.baseDomain) }}
+                - {{ $hosts }}
               # Wenn du lieber dein Wildcard-Secret vom cert-manager nutzt:
               # tls:
               # - hosts:
-              #   - {{ .Values.argocd.host | default (printf "argocd.%s" .Values.baseDomain) }}
+              #   - {{ $hosts }}
               #   secretName: wildcard-intern-h47-eu-tls
   destination:
     server: https://kubernetes.default.svc

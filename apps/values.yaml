@@ -1,6 +1,6 @@
 baseDomain: intern.h47.eu
 
-argoCd:
+argocd:
   enabled: true
   revision: HEAD
   namespace: argocd
