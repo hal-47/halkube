@@ -62,16 +62,19 @@ spec:
         additionalArguments:
           - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
           - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+          # ACME Resolver bleibt wie bei dir:
           - "--certificatesresolvers.cloudflare.acme.email=admin@h47.eu"
           - "--certificatesresolvers.cloudflare.acme.storage=/data/acme.json"
           - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
-          # optional: zusätzliche Resolver für schnellere DNS-Prüfung
           - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
-          # optional vorab Wildcards ziehen (nicht zwingend, Traefik kann on-demand):
-          - "--certificatesresolvers.cloudflare.acme.domains[0].main=h47.eu"
-          - "--certificatesresolvers.cloudflare.acme.domains[0].sans=*.h47.eu"
-          - "--certificatesresolvers.cloudflare.acme.domains[1].main=intern.h47.eu"
-          - "--certificatesresolvers.cloudflare.acme.domains[1].sans=*.intern.h47.eu"
+
+          # NEU: Domains gehören unter den EntryPoint, nicht unter ACME:
+          - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
+          - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
 
         # --- ACME-Speicher persistent ---
         persistence:
