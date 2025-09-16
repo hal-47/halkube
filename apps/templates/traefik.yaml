@@ -104,5 +104,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-      - Replace=true        # <— NUR für diesen „Clean Sync“, danach wieder entfernen
 {{- end }}
