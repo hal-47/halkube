@@ -71,10 +71,10 @@ spec:
 
           # NEU: Domains gehören unter den EntryPoint, nicht unter ACME:
           - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
-          - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
-          - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
-          - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
-          - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
+        #  - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
+        #  - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
+        #  - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
+        #  - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
 
         # --- ACME-Speicher persistent ---
         persistence:
@@ -87,6 +87,14 @@ spec:
         envFrom:
           - secretRef:
             name: cloudflare-dns
+        podSecurityContext:
+          fsGroup: 65532
+          fsGroupChangePolicy: OnRootMismatch
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65532
+          runAsGroup: 65532
 
   syncPolicy:
     automated:
