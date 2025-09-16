@@ -36,5 +36,4 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - ApplyOutOfSyncOnly=true
-      - Replace=true
 {{- end }}
