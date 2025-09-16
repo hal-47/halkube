@@ -16,11 +16,12 @@ spec:
       targetRevision: {{ .Values.metallb.chartVersion | default "0.15.2" | quote }}
       helm:
         releaseName: {{ .Values.metallb.releaseName | default "metallb" | quote }}
+        skipCrds: true
         values: |
           # Beispiel: LoadBalancerClass setzen (optional)
           loadBalancerClass: ""
 
-    - repoURL: {{ .Values.global.repoURL | default "https://git.example.com/your/repo.git" | quote }}
+    - repoURL: {{ .Values.global.repoURL | default "https://github.com/hal-47/halkube.git" | quote }}
       targetRevision: {{ .Values.metallb.revision | default "HEAD" | quote }}
       path: apps/manifests/metallb
       directory: { recurse: true }
