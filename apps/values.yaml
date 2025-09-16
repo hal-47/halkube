@@ -9,8 +9,8 @@ metallb:
   revision: "HEAD"
 
 traefik:
-  enabled: false
-  chartVersion: "*"
+  enabled: true
+  chartVersion: "37.1.1"
   namespace: traefik
 
 longhorn:
@@ -20,4 +20,5 @@ longhorn:
 
 global:
   repoURL: "https://github.com/hal-47/halkube.git"
+  acmeEmail: "admin@h47.eu"
   

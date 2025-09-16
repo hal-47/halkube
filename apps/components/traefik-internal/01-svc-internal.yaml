@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-internal
+  namespace: traefik
+  annotations:
+    metallb.universe.tf/address-pool: default   # ggf. deinen Poolnamen anpassen
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik
+  ports:
+    - name: web
+      port: 80
+      targetPort: web
+    - name: websecure
+      port: 443
+      targetPort: websecure

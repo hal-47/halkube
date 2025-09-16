@@ -1,0 +1,26 @@
+{{- if .Values.traefik.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik-extras
+  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "31"   # nach Traefik (wave 30)
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  source:
+    repoURL: {{ required "Set .Values.repoURL to your Git URL" .Values.repoURL | quote }}
+    targetRevision: {{ .Values.targetRevision | default "HEAD" | quote }}
+    path: apps/components/traefik-internal
+    directory:
+      recurse: true
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+{{- end }}
