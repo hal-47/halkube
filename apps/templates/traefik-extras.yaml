@@ -14,8 +14,8 @@ spec:
     server: https://kubernetes.default.svc
     namespace: traefik
   source:
-    repoURL: {{ required "Set .Values.repoURL to your Git URL" .Values.repoURL | quote }}
-    targetRevision: {{ .Values.targetRevision | default "HEAD" | quote }}
+    repoURL: {{ (.Values.repoURL | default .Values.global.repoURL) | required "Set .Values.repoURL or .Values.global.repoURL to your Git URL" | quote }}
+    targetRevision: {{ (.Values.targetRevision | default .Values.global.targetRevision | default "HEAD") | quote }}
     path: apps/components/traefik-internal
     directory:
       recurse: true
