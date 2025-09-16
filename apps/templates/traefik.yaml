@@ -60,17 +60,20 @@ spec:
 
         # --- HTTPS erzwingen & ACME (DNS-01 via Cloudflare) ---
         additionalArguments:
+          - "--entrypoints.web.address=:80/tcp"
+          - "--entrypoints.websecure.address=:443/tcp"
           - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
           - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
           # ACME Resolver bleibt wie bei dir:
           - "--certificatesresolvers.cloudflare.acme.email=admin@h47.eu"
           - "--certificatesresolvers.cloudflare.acme.storage=/data/acme.json"
+          - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
           - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
-          - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
+        # - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
 
           # NEU: Domains gehören unter den EntryPoint, nicht unter ACME:
-          - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
+        #  - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
         #  - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
         #  - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
         #  - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"

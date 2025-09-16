@@ -16,6 +16,34 @@ spec:
     path: charts/argo-cd
     helm:
       releaseName: argo-cd
+      values: |
+          # 1) Argo CD Server intern per HTTP, TLS terminiert an Traefik
+          configs:
+            params:
+              server.insecure: "true"   # entspricht argocd-cmd-params-cm
+          server:
+            service:
+              ports:
+                http: 80
+                https: 443
+              targetPort: 8080
+            # 2) Ingress über Traefik (HTTPS). Zert via Traefik-ACME 'cloudflare'
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.entrypoints: websecure
+                traefik.ingress.kubernetes.io/router.tls: "true"
+                traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
+                # argocd CLI (gRPC über h2c)
+                traefik.ingress.kubernetes.io/service.serversscheme: h2c
+              hosts:
+                - {{ .Values.argocd.host | default (printf "argocd.%s" .Values.baseDomain) }}
+              # Wenn du lieber dein Wildcard-Secret vom cert-manager nutzt:
+              # tls:
+              # - hosts:
+              #   - {{ .Values.argocd.host | default (printf "argocd.%s" .Values.baseDomain) }}
+              #   secretName: wildcard-intern-h47-eu-tls
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}

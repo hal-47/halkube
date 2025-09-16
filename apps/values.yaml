@@ -1,7 +1,10 @@
+baseDomain: intern.h47.eu
+
 argoCd:
   enabled: true
   revision: HEAD
   namespace: argocd
+  host: argocd.intern.h47.eu
 
 metallb:
   enabled: true
