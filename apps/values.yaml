@@ -4,9 +4,9 @@ argoCd:
   namespace: argocd
 
 metallb:
-  enabled: true
-  chartVersion: "0.15.2"
-  namespace: metallb-system
+  enabled: false
+  path: "apps/manifests/metallb"
+  revision: "HEAD"
 
 traefik:
   enabled: false
@@ -17,3 +17,7 @@ longhorn:
   enabled: true
   chartVersion: "1.9.1"
   namespace: longhorn-system
+
+global:
+  repoURL: "https://github.com/hal-47/halkube.git"
+  
