@@ -23,4 +23,3 @@ longhorn:
 global:
   repoURL: "https://github.com/hal-47/halkube.git"
   acmeEmail: "admin@h47.eu"
-  
