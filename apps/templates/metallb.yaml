@@ -1,4 +1,4 @@
-{{- if .Values.metallb.enabled }}
+{{- if (index .Values "metallb" "enabled") }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -17,10 +17,14 @@ spec:
       helm:
         releaseName: {{ .Values.metallb.releaseName | default "metallb" | quote }}
 
-    - repoURL: {{ (or (index .Values "metallb" "repoURL") (index .Values "global" "repoURL") "https://github.com/hal-47/halkube.git") | quote }}
-      targetRevision: {{ (index .Values "metallb" "revision") | default "HEAD" | quote }}
-      path: {{ (index .Values "metallb" "path") | default "apps/manifests/metallb" | quote }}
-      directory: { recurse: true }
+    {{- $repoURL := (coalesce (index .Values "metallb" "repoURL") (index .Values "global" "repoURL") "https://github.com/hal-47/halkube.git") }}
+    {{- $revision := (coalesce (index .Values "metallb" "revision") "HEAD") }}
+    {{- $path := (coalesce (index .Values "metallb" "path") "apps/manifests/metallb") }}
+    - repoURL: {{ $repoURL | quote }}
+      targetRevision: {{ $revision | quote }}
+      path: {{ $path | quote }}
+      directory:
+        recurse: true
 
   destination:
     server: https://kubernetes.default.svc
