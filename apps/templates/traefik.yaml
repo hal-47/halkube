@@ -76,6 +76,15 @@ spec:
         #  - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
         #  - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
 
+        podSecurityContext:
+          fsGroup: 65532
+          fsGroupChangePolicy: OnRootMismatch
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65532
+          runAsGroup: 65532
+
         # --- ACME-Speicher persistent ---
         persistence:
           enabled: true
@@ -87,14 +96,6 @@ spec:
         envFrom:
           - secretRef:
             name: cloudflare-dns
-        podSecurityContext:
-          fsGroup: 65532
-          fsGroupChangePolicy: OnRootMismatch
-
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 65532
-          runAsGroup: 65532
 
   syncPolicy:
     automated:
@@ -102,4 +103,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
+      - Replace=true        # <— NUR für diesen „Clean Sync“, danach wieder entfernen
 {{- end }}
