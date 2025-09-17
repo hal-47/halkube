@@ -1,9 +1,11 @@
 {{- if (index .Values "metallb" "enabled") }}
+{{- /* Argo CD Namespace robust ermitteln (argocd oder argoCd, Fallback "argocd") */ -}}
+{{- $argocdNs := default "argocd" (or .Values.argocd.namespace .Values.argoCd.namespace) -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: metallb
-  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
+  namespace: {{ $argocdNs | quote }}
   annotations:
     argocd.argoproj.io/sync-wave: "20"
   finalizers:
