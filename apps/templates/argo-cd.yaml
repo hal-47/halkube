@@ -26,6 +26,9 @@ spec:
       releaseName: argo-cd
       values: |
           # 1) Argo CD Server intern per HTTP, TLS terminiert an Traefik
+          redis:
+            secretInit:
+              enabled: false
           configs:
             params:
               server.insecure: "true"   # entspricht argocd-cmd-params-cm
