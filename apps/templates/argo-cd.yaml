@@ -1,9 +1,9 @@
-{{- if .Values.argocd.enabled }}
-{{- /* sichere Defaults */ -}}
-{{- $ns   := default "argocd"         .Values.argocd.namespace -}}
-{{- $base := default "intern.h47.eu"  .Values.baseDomain -}}
-{{- $host := default (printf "argocd.%s" $base) .Values.argocd.host -}}
-{{- $hosts := list $host -}}  {{/* falls irgendwo eine Liste erwartet wird */}}
+{{- if or .Values.argocd.enabled .Values.argoCd.enabled }}
+{{- /* sichere Defaults & Abwärtskompatibilität für argoCd/argocd */ -}}
+{{- $ns      := default "argocd"        (or .Values.argocd.namespace .Values.argoCd.namespace) -}}
+{{- $base    := default "intern.h47.eu" .Values.baseDomain -}}
+{{- $host    := default (printf "argocd.%s" $base) (or .Values.argocd.host .Values.argoCd.host) -}}
+{{- $rev     := default "HEAD"          (or .Values.argocd.revision .Values.argoCd.revision) -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -20,7 +20,7 @@ spec:
     namespace: {{ $ns | quote }}
   source:
     repoURL: https://github.com/hal-47/halkube.git
-    targetRevision: {{ .Values.argoCd.revision | default "HEAD" | quote }}
+    targetRevision: {{ $rev | quote }}
     path: charts/argo-cd
     helm:
       releaseName: argo-cd
@@ -46,11 +46,11 @@ spec:
                 # argocd CLI (gRPC über h2c)
                 traefik.ingress.kubernetes.io/service.serversscheme: h2c
               hosts:
-                - {{ $hosts }}
+                - {{ $host }}
               # Wenn du lieber dein Wildcard-Secret vom cert-manager nutzt:
               # tls:
               # - hosts:
-              #   - {{ $hosts }}
+              #   - {{ $host }}
               #   secretName: wildcard-intern-h47-eu-tls
   syncPolicy:
     automated:

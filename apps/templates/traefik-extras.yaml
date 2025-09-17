@@ -1,9 +1,10 @@
 {{- if .Values.traefik.enabled }}
+{{- $argocdNs := default "argocd" (or .Values.argocd.namespace .Values.argoCd.namespace) -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: traefik-extras
-  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
+  namespace: {{ $argocdNs | quote }}
   annotations:
     argocd.argoproj.io/sync-wave: "31"   # nach Traefik (wave 30)
   finalizers:
