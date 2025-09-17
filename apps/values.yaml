@@ -22,6 +22,7 @@ longhorn:
   enabled: true
   chartVersion: "1.9.1"
   namespace: longhorn-system
+  host: longhorn.intern.h47.eu
 
 global:
   repoURL: "https://github.com/hal-47/halkube.git"

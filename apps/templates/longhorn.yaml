@@ -1,4 +1,7 @@
 {{- if .Values.longhorn.enabled }}
+{{- $ns := default "longhorn-system" .Values.longhorn.namespace -}}
+{{- $base := default "intern.h47.eu" .Values.baseDomain -}}
+{{- $host := default (printf "longhorn.%s" $base) .Values.longhorn.host -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -12,7 +15,7 @@ spec:
   project: {{ .Values.longhorn.project | default "platform" | quote }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: {{ .Values.longhorn.namespace | default "longhorn-system" | quote }}
+    namespace: {{ $ns | quote }}
   sources:
     - repoURL: https://charts.longhorn.io
       chart: longhorn
@@ -29,6 +32,14 @@ spec:
             defaultClass: true
             defaultClassReplicaCount: 2
             reclaimPolicy: Delete
+          ingress:
+            enabled: true
+            host: {{ $host }}
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+              traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
           # defaultSettings:
           #   defaultDataPath: /var/lib/longhorn
           #   guaranteedEngineCPU: 0.2
