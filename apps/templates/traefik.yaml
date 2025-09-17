@@ -60,8 +60,6 @@ spec:
 
         # --- HTTPS erzwingen & ACME (DNS-01 via Cloudflare) ---
         additionalArguments:
-          - "--entrypoints.web.address=:80/tcp"
-          - "--entrypoints.websecure.address=:443/tcp"
           - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
           - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
