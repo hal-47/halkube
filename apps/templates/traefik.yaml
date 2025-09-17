@@ -100,11 +100,9 @@ spec:
           - secretRef:
               name: cloudflare-dns
         deployment:
-          replicas: 2
+          replicas: 1      # <<<
         persistence:
-          enabled: true
-          storageClass: <rwx-class>   # RWX!
-          accessMode: ReadWriteMany   # wichtig
+          enabled: true    # acme.json bleibt auf PVC
   syncPolicy:
     automated:
       prune: true
