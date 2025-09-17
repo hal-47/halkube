@@ -1,17 +1,23 @@
-{{- if .Values.argoCd.enabled }}
-{{- $base := default "intern.h47.eu" .Values.baseDomain -}}
-{{- $host := default (printf "argocd.%s" $base) (index .Values "argocd" "host") -}}
+{{- if .Values.argocd.enabled }}
+{{- /* sichere Defaults */ -}}
+{{- $ns   := default "argocd"         .Values.argocd.namespace -}}
+{{- $base := default "intern.h47.eu"  .Values.baseDomain -}}
+{{- $host := default (printf "argocd.%s" $base) .Values.argocd.host -}}
+{{- $hosts := list $host -}}  {{/* falls irgendwo eine Liste erwartet wird */}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: argo-cd
-  namespace: argocd
+  namespace: {{ $ns }}
   annotations:
     argocd.argoproj.io/sync-wave: "10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: platform
+  project: {{ .Values.argocd.project | default "platform" | quote }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ $ns | quote }}
   source:
     repoURL: https://github.com/hal-47/halkube.git
     targetRevision: {{ .Values.argoCd.revision | default "HEAD" | quote }}
@@ -46,9 +52,6 @@ spec:
               # - hosts:
               #   - {{ $hosts }}
               #   secretName: wildcard-intern-h47-eu-tls
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
   syncPolicy:
     automated:
       prune: true
