@@ -106,8 +106,6 @@ spec:
           replicas: 1
           strategy:
             type: Recreate
-        persistence:
-          enabled: true    # acme.json bleibt auf PVC
   syncPolicy:
     automated:
       prune: true
