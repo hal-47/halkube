@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: longhorn
-  namespace: {{ .Values.argoCd.namespace | default "argocd" | quote }}
+  namespace: {{ default "argocd" (or .Values.argocd.namespace .Values.argoCd.namespace) | quote }}
   annotations:
     argocd.argoproj.io/sync-wave: "40"
   finalizers:
