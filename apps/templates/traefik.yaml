@@ -87,6 +87,11 @@ spec:
           runAsNonRoot: true
           runAsUser: 65532
           runAsGroup: 65532
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - NET_BIND_SERVICE
 
         # --- ACME-Speicher persistent ---
         persistence:
@@ -100,7 +105,9 @@ spec:
           - secretRef:
               name: cloudflare-dns
         deployment:
-          replicas: 1      # <<<
+          replicas: 1
+          strategy:
+            type: Recreate
         persistence:
           enabled: true    # acme.json bleibt auf PVC
   syncPolicy:

@@ -10,7 +10,7 @@ argo-cd:
   configs:
     cm:
       # Base-URL der Argo-CD-UI (bei Domain hier die Domain eintragen)
-      url: https://192.168.178.85:30443
+      url: https://argocd.intern.h47.eu
       # Admin-Login erlauben (UI-Nutzer 'admin')
       accounts.admin.enabled: "true"
     rbac:
@@ -30,17 +30,15 @@ argo-cd:
   # ---------------------------------------------------------------------------
   server:
     service:
-      type: NodePort
+      type: ClusterIP
       ports:
         - name: https
           port: 443
           targetPort: 8080
-          nodePort: 32443
           protocol: TCP
         - name: http
           port: 80
           targetPort: 8080
-          nodePort: 32080
           protocol: TCP
     serviceAccount:
       create: true
