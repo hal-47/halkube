@@ -99,7 +99,12 @@ spec:
         envFrom:
           - secretRef:
               name: cloudflare-dns
-
+        deployment:
+          replicas: 2
+        persistence:
+          enabled: true
+          storageClass: <rwx-class>   # RWX!
+          accessMode: ReadWriteMany   # wichtig
   syncPolicy:
     automated:
       prune: true
