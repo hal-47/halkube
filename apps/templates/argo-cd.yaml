@@ -30,14 +30,11 @@ spec:
             secretInit:
               enabled: false
           configs:
+            cm:
+              url: https://{{ $host }}
             params:
               server.insecure: "true"   # entspricht argocd-cmd-params-cm
           server:
-            service:
-              ports:
-                http: 80
-                https: 443
-              targetPort: 8080
             # 2) Ingress über Traefik (HTTPS). Zert via Traefik-ACME 'cloudflare'
             ingress:
               enabled: true

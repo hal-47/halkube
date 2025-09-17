@@ -23,7 +23,7 @@ argo-cd:
       scopes: '[groups]'
     params:
       # TLS am argocd-server einschalten/abschalten
-      server.insecure: "false"
+      server.insecure: "true"
 
   # ---------------------------------------------------------------------------
   # Argo-CD Server (UI/API)
