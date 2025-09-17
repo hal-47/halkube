@@ -25,7 +25,7 @@ spec:
     helm:
       releaseName: argo-cd
       values: |
-          # 1) Argo CD Server intern per HTTP, TLS terminiert an Traefik
+        argo-cd:
           redis:
             secretInit:
               enabled: false
