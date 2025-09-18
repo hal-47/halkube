@@ -8,7 +8,7 @@ metadata:
   name: longhorn
   namespace: {{ default "argocd" (or .Values.argocd.namespace .Values.argoCd.namespace) | quote }}
   annotations:
-    argocd.argoproj.io/sync-wave: "40"
+    argocd.argoproj.io/sync-wave: "30"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:

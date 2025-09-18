@@ -11,18 +11,18 @@ metallb:
   path: "apps/manifests/metallb"
   revision: "HEAD"
 
+longhorn:
+  enabled: true
+  chartVersion: "1.9.1"
+  namespace: longhorn-system
+  host: longhorn.intern.h47.eu
+
 traefik:
   enabled: true
   chartVersion: "37.1.1"
   namespace: traefik
   repoURL: "https://github.com/hal-47/halkube.git"
   targetRevision: "main"   # oder dein Branch/Tag
-
-longhorn:
-  enabled: true
-  chartVersion: "1.9.1"
-  namespace: longhorn-system
-  host: longhorn.intern.h47.eu
 
 perlite:
   enabled: false
