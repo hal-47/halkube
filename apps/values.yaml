@@ -24,6 +24,15 @@ longhorn:
   namespace: longhorn-system
   host: longhorn.intern.h47.eu
 
+perlite:
+  enabled: false
+  namespace: perlite
+  chartVersion: "0.2.3"
+  host: perlite.intern.h47.eu
+  storageClass: longhorn
+  storageSize: 10Gi
+  extraValues: {}
+
 global:
   repoURL: "https://github.com/hal-47/halkube.git"
   acmeEmail: "admin@h47.eu"

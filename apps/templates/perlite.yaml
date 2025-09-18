@@ -1,0 +1,46 @@
+{{- if .Values.perlite.enabled }}
+{{- $argocdNs := default "argocd" (or .Values.argocd.namespace .Values.argoCd.namespace) -}}
+{{- $ns := default "perlite" .Values.perlite.namespace -}}
+{{- $base := default "intern.h47.eu" .Values.baseDomain -}}
+{{- $host := default (printf "perlite.%s" $base) .Values.perlite.host -}}
+{{- $repoURL := .Values.perlite.repoURL | default "https://extrimian.github.io/extrim-helm-charts" -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: perlite
+  namespace: {{ $argocdNs | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "70"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.perlite.project | default "platform" | quote }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ $ns | quote }}
+  source:
+    repoURL: {{ $repoURL | quote }}
+    chart: perlite
+    targetRevision: {{ .Values.perlite.chartVersion | default "0.2.3" | quote }}
+    helm:
+      releaseName: {{ .Values.perlite.releaseName | default "perlite" | quote }}
+      values: |
+        {{- $values := dict }}
+        {{- $persistence := dict "enabled" true "storageClass" (.Values.perlite.storageClass | default "longhorn") "size" (.Values.perlite.storageSize | default "10Gi") -}}
+        {{- $_ := set $values "persistence" $persistence -}}
+        {{- $annotations := dict "traefik.ingress.kubernetes.io/router.entrypoints" "websecure" "traefik.ingress.kubernetes.io/router.tls" "true" "traefik.ingress.kubernetes.io/router.tls.certresolver" "cloudflare" "traefik.ingress.kubernetes.io/router.middlewares" "traefik-allow-lan@kubernetescrd" -}}
+        {{- $path := dict "path" "/" "pathType" "Prefix" -}}
+        {{- $hostEntry := dict "host" $host "paths" (list $path) -}}
+        {{- $ingress := dict "enabled" true "className" (.Values.perlite.ingressClassName | default "traefik-internal") "annotations" $annotations "hosts" (list $hostEntry) -}}
+        {{- $_ := set $values "ingress" $ingress -}}
+        {{- if .Values.perlite.extraValues }}
+        {{- $values = mergeOverwrite $values .Values.perlite.extraValues -}}
+        {{- end }}
+        {{- toYaml $values | nindent 8 }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}
