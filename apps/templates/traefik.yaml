@@ -19,6 +19,7 @@ spec:
     targetRevision: {{ .Values.traefik.chartVersion | default "37.1.1" | quote }}
     helm:
       releaseName: traefik
+      {{- $dashboardAuthSecret := .Values.traefik.dashboardAuthSecretName | default "traefik-dashboard-auth-secret" -}}
       values: |
         # --- IngressClass ---
         ingressClass:
@@ -46,7 +47,7 @@ spec:
               name: traefik-dashboard-auth
             spec:
               basicAuth:
-                secret: {{ .Values.traefik.dashboardAuthSecretName | default "traefik-dashboard-auth-secret" | quote }}
+                secret: {{ $dashboardAuthSecret | quote }}
 
         # --- Provider (CRD + Ingress) ---
         providers:
