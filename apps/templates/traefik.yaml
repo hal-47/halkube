@@ -102,11 +102,11 @@ spec:
         # - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
 
           # NEU: Domains gehören unter den EntryPoint, nicht unter ACME:
-        #  - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
-        #  - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
-        #  - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
-        #  - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
-        #  - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
+          - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
+          - "--entrypoints.websecure.http.tls.domains[0].main=h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[0].sans=*.h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[1].main=intern.h47.eu"
+          - "--entrypoints.websecure.http.tls.domains[1].sans=*.intern.h47.eu"
 
         podSecurityContext:
           fsGroup: 65532
