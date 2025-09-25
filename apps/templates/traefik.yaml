@@ -1,4 +1,5 @@
 {{- if .Values.traefik.enabled }}
+{{- $dashboardAuthSecret := .Values.traefik.dashboardAuthSecretName | default "traefik-dashboard-auth-secret" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -19,7 +20,6 @@ spec:
     targetRevision: {{ .Values.traefik.chartVersion | default "37.1.1" | quote }}
     helm:
       releaseName: traefik
-      {{- $dashboardAuthSecret := .Values.traefik.dashboardAuthSecretName | default "traefik-dashboard-auth-secret" -}}
       values: |
         # --- IngressClass ---
         ingressClass:
@@ -31,24 +31,30 @@ spec:
         ingressRoute:
           dashboard:
             enabled: true
-            # Custom match rule with host domain
-            matchRule: Host(`traefik.intern.h47.eu`)
-            entryPoints: ["websecure"]
-            # Add custom middlewares : authentication and redirection
-            middlewares:
-              - name: traefik-dashboard-auth
+            isDefaultClass: true
+            name: traefik
 
-        # Create the custom middlewares used by the IngressRoute dashboard (can also be created in another way).
-        # /!\ Yes, you need to replace "changeme" password with a better one. /!\
-        extraObjects:
-           - apiVersion: traefik.io/v1alpha1
-            kind: Middleware
-            metadata:
-              name: traefik-dashboard-auth
-            spec:
-              basicAuth:
-                secret: {{ $dashboardAuthSecret | quote }}
-
+          # Create an IngressRoute for the dashboard
+          ingressRoute:
+            dashboard:
+              enabled: true
+              # Custom match rule with host domain
+              matchRule: Host(`traefik.intern.h47.eu`)
+              entryPoints: ["websecure"]
+              # Add custom middlewares : authentication and redirection
+              middlewares:
+                - name: traefik-dashboard-auth
+                    # Create the custom middlewares used by the IngressRoute dashboard (can also be created in another way).
+          # /!\ Yes, you need to replace "changeme" password with a better one. /!\
+          extraObjects:
+            - apiVersion: traefik.io/v1alpha1
+              kind: Middleware
+              metadata:
+                name: traefik-dashboard-auth
+              spec:
+                basicAuth:
+                  secret: {{ $dashboardAuthSecret | quote }}
+                  
         # --- Provider (CRD + Ingress) ---
         providers:
           kubernetesCRD:
