@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: perlite
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: perlite-vault-pvc
+  namespace: perlite
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perlite
+  namespace: perlite
+  labels:
+    app: perlite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perlite
+  template:
+    metadata:
+      labels:
+        app: perlite
+    spec:
+      containers:
+        - name: perlite
+          image: sec77/perlite:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: NOTES_PATH
+              value: "Notes"
+            - name: HIDE_FOLDERS
+              value: "private,.obsidian"
+          volumeMounts:
+            - name: vault
+              mountPath: /var/www/perlite/Notes
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+      volumes:
+        - name: vault
+          persistentVolumeClaim:
+            claimName: perlite-vault-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perlite
+  namespace: perlite
+  labels:
+    app: perlite
+spec:
+  selector:
+    app: perlite
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: perlite
+  namespace: perlite
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`perlite.intern.h47.eu`)
+      kind: Rule
+      services:
+        - name: perlite
+          port: 80

@@ -27,11 +27,9 @@ traefik:
 perlite:
   enabled: true
   namespace: perlite
-  chartVersion: "0.2.3"
-  host: perlite.intern.h47.eu
-  storageClass: longhorn
-  storageSize: 10Gi
-  extraValues: {}
+  repoURL: "https://github.com/hal-47/halkube.git"
+  revision: HEAD
+  path: "apps/manifests/perlite"
 
 global:
   repoURL: "https://github.com/hal-47/halkube.git"
