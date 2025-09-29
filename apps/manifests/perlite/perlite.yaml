@@ -47,7 +47,7 @@ spec:
           volumeMounts:
             - name: vault
               mountPath: /var/www/perlite/Notes
-              readOnly: true
+              readOnly: false
           resources:
             requests:
               cpu: 100m
