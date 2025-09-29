@@ -25,7 +25,7 @@ traefik:
   targetRevision: "main"   # oder dein Branch/Tag
 
 perlite:
-  enabled: false
+  enabled: true
   namespace: perlite
   chartVersion: "0.2.3"
   host: perlite.intern.h47.eu
