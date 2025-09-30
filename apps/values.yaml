@@ -25,7 +25,7 @@ traefik:
   targetRevision: "main"   # oder dein Branch/Tag
 
 perlite:
-  enabled: true
+  enabled: false
   namespace: perlite
   repoURL: "https://github.com/hal-47/halkube.git"
   revision: HEAD
