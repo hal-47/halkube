@@ -41,12 +41,12 @@ spec:
             - containerPort: 80
           env:
             - name: NOTES_PATH
-              value: "Notes"
+              value: "/vault/Notes"
             - name: HIDE_FOLDERS
               value: "private,.obsidian"
           volumeMounts:
             - name: vault
-              mountPath: /var/www/perlite/Notes
+              mountPath: /vault
               readOnly: false
           resources:
             requests:
